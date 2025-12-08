@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">    
+    <link rel="stylesheet" href="booking.css">
+    <title>Car Booking & Registration</title>
+</head>
+
+<body>
+    <header>
+        <div class="hero">
+            <h1>Register, Book & Pay</h1>
+            <p>Reserve Your Dream Car Today</p>
+        </div>
+    </header>
+
+    <nav>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="models.html">Models</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="booking.html">Booking</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="booking-wrapper">
+            <form action="booking_process.php" method="post">
+                <!-- Personal Information -->
+                <div class="form-section">
+                    <h3>Personal Information</h3>
+                    <input type="text" name="client_name" placeholder="Full Name" required>
+                    <input type="email" name="client_email" placeholder="Email Address" required>
+                    <input type="tel" name="client_phone" placeholder="Phone Number" required>
+                    <input type="text" name="client_id_number" placeholder="National ID Number" required>
+                    <textarea name="client_address" placeholder="Full Residential Address" rows="3" required></textarea>
+                </div>
+
+                <!-- Car Selection -->
+                <div class="form-section">
+                    <h3>Car Selection & Booking</h3>
+                    <select name="selected_car" id="car_model" required onchange="showPrice()">
+                        <option value="">Select Car Model</option>
+                        <option value="1968 Ford Mustang GT500 (Eleanor)">1968 Ford Mustang GT500 (Eleanor)</option>
+                        <option value="Lamborghini Aventador">Lamborghini Aventador</option>
+                        <option value="Rolls Royce Ghost Black Badge">Rolls Royce Ghost Black Badge</option>
+                        <option value="Mercedes Benz E63s AMG">Mercedes Benz E63s AMG</option>
+                        <option value="Porsche Carrera GT">Porsche Carrera GT</option>
+                        <option value="Bentley Bentayga">Bentley Bentayga</option>
+                    </select>
+                    
+                    <input type="date" name="test_drive_date" required>
+                    
+                    <!-- Price Display (read-only) -->
+                    <div class="price-display">
+                        <label>Quoted Price (USD):</label>
+                        <input type="text" id="quotation" readonly placeholder="Select a car to see price">
+                    </div>
+                </div>
+
+                <!-- Payment Information -->
+                <div class="form-section">
+                    <h3>Payment Information</h3>
+                    <select name="payment_type" required>
+                        <option value="">Select Payment Method</option>
+                        <option value="cash">Cash</option>
+                        <option value="card">Credit Card</option>
+                        <option value="transfer">Bank Transfer</option>
+                    </select>
+                    
+                    <input type="number" name="payment_amount" step="0.01" placeholder="Amount Paid (USD)" required>
+                </div>
+
+                <!-- Special Requests -->
+                <div class="form-section">
+                    <h3>Additional Information</h3>
+                    <textarea name="special_requests" placeholder="Special Requests, Notes, or Additional Requirements" rows="4"></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Confirm Booking</button>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        // Price calculation function
+        function showPrice() {
+            const prices = {
+                "1968 Ford Mustang GT500 (Eleanor)": 1000,
+                "Lamborghini Aventador": 1800,
+                "Rolls Royce Ghost Black Badge": 3500,
+                "Mercedes Benz E63s AMG": 1200,
+                "Porsche Carrera GT": 2500,
+                "Bentley Bentayga": 2750
+            };
+
+            let model = document.getElementById("car_model").value;
+            let quotationField = document.getElementById("quotation");
+            
+            if (prices[model]) {
+                quotationField.value = "$" + prices[model].toLocaleString();
+                // Auto-fill payment amount with the quoted price
+                document.querySelector('input[name="payment_amount"]').value = prices[model];
+            } else {
+                quotationField.value = "";
+                document.querySelector('input[name="payment_amount"]').value = "";
+            }
+        }
+
+        // Auto-select car model when coming from models.html
+        window.onload = function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedCar = urlParams.get("car");
+
+            if (selectedCar) {
+                const dropdown = document.getElementById("car_model");
+                dropdown.value = selectedCar;
+                showPrice(); // Auto-fill quotation and payment amount
+            }
+
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelector('input[name="test_drive_date"]').min = today;
+        };
+    </script>
+
+</body>
+</html>
